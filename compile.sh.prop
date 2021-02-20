@@ -1,0 +1,29 @@
+#! /bin/bash
+# Compiles the whole project
+
+javac -d classes -classpath .:classes src/ClientActions.java
+javac -d classes -classpath .:classes src/ClientActionsImpl.java
+javac -d classes -classpath .:classes src/ServerEvent.java
+javac -d classes -classpath .:classes src/ServerEventImpl.java
+
+cd classes
+jar cvf ../lib/ClientActions.jar ClientActions.class
+jar cvf ../lib/ClientActionsImpl.jar ClientActionsImpl.class
+jar cvf ../lib/ServerEvent.jar ServerEvent.class
+jar cvf ../lib/ServerEventImpl.jar ServerEventImpl.class
+
+cd ..
+javac -d classes -cp .:classes:lib/ClientActions.jar:lib/ServerEvent.jar:lib/ServerEventImpl.jar src/ChatServer.java
+javac -d classes -cp .:classes:lib/ClientActions.jar:lib/ServerEvent.jar:lib/ClientActionsImpl.jar src/ChatClient.java
+
+# Replace exact path with yours
+export CLASSPATH=/home/vincent/Documents/distributed_sys/chat-server/lib:/home/vincent/Documents/distributed_sys/chat-server/classes
+
+rmiregistry &
+
+# Take the first PID printed to kill the registry before you recompile
+ps -ax | grep rmiregistry
+
+# Launch the programs from the root folder of the repo by using  the following commands
+# java -classpath .:classes:lib/ServerEvent.jar:lib/ClientActions.jar:lib/ServerEventImpl.jar ChatServer
+# java -classpath .:classes:lib/ServerEvent.jar:lib/ClientActions.jar:lib/ClientActionsImpl.jar ChatClient localhost
