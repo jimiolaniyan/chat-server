@@ -1,4 +1,5 @@
 import java.rmi.RemoteException;
+import java.util.Vector;
 
 public class ClientActionsImpl implements ClientActions {
 
@@ -11,6 +12,11 @@ public class ClientActionsImpl implements ClientActions {
     @Override
     public void getMessage(String msg) throws RemoteException {
         System.out.println(msg);
+    }
+
+    @Override
+    public void getMessages(Vector<Message> messages) throws RemoteException {
+        messages.forEach(System.out::println);
     }
 
     @Override

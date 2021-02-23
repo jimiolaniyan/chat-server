@@ -1,8 +1,15 @@
 #! /bin/bash
 # Compiles the whole project
 
+PID=$(pidof "rmiregistry")
+if [ $PID ]; then
+  echo "Killing rmiregistry pid:" $PID
+  kill $PID
+fi
+
 javac -d classes -classpath .:classes src/ClientActions.java
 javac -d classes -classpath .:classes src/ClientActionsImpl.java
+javac -d classes -classpath .:classes src/Message.java
 javac -d classes -classpath .:classes src/ServerEvent.java
 javac -d classes -classpath .:classes src/ServerEventImpl.java
 

@@ -1,3 +1,5 @@
 lib
 classes
 .idea
+compile.sh.prop
+compile.sh

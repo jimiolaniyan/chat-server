@@ -5,9 +5,11 @@ import java.util.Vector;
 public class ServerEventImpl implements ServerEvent {
 
     Vector<ClientActions> clients;
+    Vector<Message> messages;
 
     public ServerEventImpl() {
-        clients = new Vector<ClientActions>();
+        clients = new Vector<>();
+        messages = new Vector<>();
         System.out.println("Registry ready.");
     }
 
@@ -17,6 +19,11 @@ public class ServerEventImpl implements ServerEvent {
         //ClientActionsImpl cl = (ClientActionsImpl) client;
         clients.add(client);
         System.out.println("added");
+
+        if (messages.size() > 0)
+            client.getMessage("See all the messages you missed, " + client.getName() + "!");
+            client.getMessages(this.messages);
+
         broadcast("[INFO] New client "+client.getName()+" has logged in");
     }
 
@@ -35,6 +42,9 @@ public class ServerEventImpl implements ServerEvent {
 
     @Override
     public void broadcastExclude(String msg, ClientActions sender) throws RemoteException {
+        Message m = new Message(sender.getName(), msg);
+        messages.add(m);
+
         for(Enumeration<ClientActions> e = clients.elements(); e.hasMoreElements();) {
             ClientActions c = (ClientActions) e.nextElement();
             try {
