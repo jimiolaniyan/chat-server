@@ -24,4 +24,10 @@ public class ClientActionsImpl implements ClientActions {
         return name;
     }
 
+    @Override
+    public void kick(String reason) throws RemoteException {
+        System.out.println("You have been kicked from the server. Reason : "+reason);
+        System.exit(2);
+    }
+
 }

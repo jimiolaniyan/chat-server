@@ -6,4 +6,5 @@ public interface ClientActions extends Remote {
     String getName() throws RemoteException;
     void getMessage(String msg) throws RemoteException;
     void getMessages(Vector<Message> msg) throws RemoteException;
+    void kick(String reason) throws RemoteException;
 }
