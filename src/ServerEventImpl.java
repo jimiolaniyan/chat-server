@@ -48,7 +48,7 @@ public class ServerEventImpl implements ServerEvent {
         for(Enumeration<ClientActions> e = clients.elements(); e.hasMoreElements();) {
             ClientActions c = (ClientActions) e.nextElement();
             try {
-                if (c != sender) {
+                if (!c.equals(sender)) {
                     c.getMessage(sender.getName()+" - "+msg);
                 }
             } catch (RemoteException rex) {
