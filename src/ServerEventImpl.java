@@ -21,7 +21,7 @@ public class ServerEventImpl implements ServerEvent {
 
     OutputStream messagesFileOut;
     OutputStream bufferOut;
-    ObjectOutput output;
+    ObjectOutputStream output;
 
     InputStream messagesFileIn;
     InputStream bufferIn;
@@ -118,7 +118,7 @@ public class ServerEventImpl implements ServerEvent {
             try {
                 c.getMessage(msg);
             } catch (RemoteException rex) {
-                System.out.println("[INFO] Client is offline. Disconnected");
+                System.out.println("[INFO] client has logged out");
                 clients.remove(c);
             }
         }
@@ -131,6 +131,7 @@ public class ServerEventImpl implements ServerEvent {
             messages.add(m);
             try {
                 output.writeObject(m);
+                output.reset();
                 output.flush();
             } catch (IOException e1) {
                 System.out.println("[ERROR] Can't write to persistency file. Reason : "+e1.getMessage());
@@ -143,7 +144,7 @@ public class ServerEventImpl implements ServerEvent {
                         c.getMessage(sender.getName() + " - " + msg);
                     }
                 } catch (RemoteException rex) {
-                    System.out.println("[INFO] Client is offline. Disconnected");
+                    System.out.println("[INFO] client has logged out");
                     clients.remove(c);
                 }
             }
