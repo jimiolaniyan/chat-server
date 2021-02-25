@@ -80,8 +80,6 @@ public class ServerEventImpl implements ServerEvent {
 
     @Override
     public void login(ClientActions client) throws RemoteException {
-        System.out.println("request");
-
         // This is work in progress so not perfect yet
         // if (findExistingClient(client) != null) {
         // client.getMessage("Sorry username: " + client.getName() + " already exists.
@@ -91,14 +89,14 @@ public class ServerEventImpl implements ServerEvent {
 
         // ClientActionsImpl cl = (ClientActionsImpl) client;
         clients.add(client);
-        System.out.println("added");
+        System.out.println("[INFO] "+client.getName()+" has logged in.");
 
         if (messages.size() > 0) {
             client.getMessage("See all the messages you missed, " + client.getName() + "!");
             client.getMessages(this.messages);
         }
 
-        broadcast("[INFO] New client " + client.getName() + " has logged in");
+        broadcast("[SERVER] New client " + client.getName() + " has logged in.");
     }
 
     private ClientActions findExistingClient(ClientActions client) {
@@ -120,7 +118,7 @@ public class ServerEventImpl implements ServerEvent {
             try {
                 c.getMessage(msg);
             } catch (RemoteException rex) {
-                System.out.println("Client is offline. Disconnected");
+                System.out.println("[INFO] Client is offline. Disconnected");
                 clients.remove(c);
             }
         }
@@ -145,7 +143,7 @@ public class ServerEventImpl implements ServerEvent {
                         c.getMessage(sender.getName() + " - " + msg);
                     }
                 } catch (RemoteException rex) {
-                    System.out.println("Client is offline. Disconnected");
+                    System.out.println("[INFO] Client is offline. Disconnected");
                     clients.remove(c);
                 }
             }
@@ -157,6 +155,19 @@ public class ServerEventImpl implements ServerEvent {
             ClientActions c = (ClientActions) e.nextElement();
             try {
                 c.kick(reason);
+            } catch (RemoteException rex) {
+                System.out.print("");
+            }
+        }
+    }
+
+    public void kick(String username, String reason) {
+        for (Enumeration<ClientActions> e = clients.elements(); e.hasMoreElements();) {
+            ClientActions c = (ClientActions) e.nextElement();
+            try {
+                if (c.getName().equals(username)) {
+                    c.kick(reason);
+                }
             } catch (RemoteException rex) {
                 System.out.print("");
             }

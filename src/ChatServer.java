@@ -23,7 +23,15 @@ public class ChatServer {
                 line =  input.nextLine();
                 if (!line.equals("/close"))
                     if (line.startsWith("/say ")) {
-                        se.broadcast("[BROADCAST] "+line.replace("/say ", ""));
+                        se.broadcast("[SERVER] Broadcast: "+line.replace("/say ", ""));
+                    } else if (line.startsWith("/kick ")) {
+                        if (line.split(" ").length >= 3) {
+                            se.kick(line.split(" ")[1], line.split(" ")[2]);
+                        } else {
+                            System.out.println("Usage: /kick username reason");
+                        }
+                    } else {
+                        System.out.println("Command not recognized.");
                     }
             } while(!line.equals("/close"));
 
