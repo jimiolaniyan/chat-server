@@ -21,7 +21,10 @@ It also saves them on a persistency file, and restores the whole history on each
 
 ### For the server
 
-None for now
+/say text
+/kick username reason
+/kickall reason
+/close
 
 ### For the client
 

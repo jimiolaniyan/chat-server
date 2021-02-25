@@ -16,25 +16,35 @@ public class ChatClient {
 
             ServerEvent se = (ServerEvent) registry.lookup("ChatService");
 
+            boolean doesNameExists;
+
             // Get client name
-            System.out.print("Please enter your client name : ");
             Scanner input = new Scanner(System.in);
-            String name =  input.nextLine();
-            //input.close();
+            String name;
+            do {
+                System.out.print("Please enter your client name : ");
+                name =  input.nextLine();
+                doesNameExists = se.checkUsernameExists(name);
+                if (doesNameExists == true) {
+                    System.out.println("Sorry, the requested username is already in use. Please enter a new name.");
+                }
+            } while (doesNameExists == true);
 
             ClientActions ca = (ClientActions) UnicastRemoteObject.exportObject(new ClientActionsImpl(name), 0);
             se.login(ca);
+
+            System.out.println("Welcome to the chatroom "+ca.getName()+" !");
 
             String line;
 
             do {
                 line =  input.nextLine();
                 if (!line.equals("/close"))
-                    se.broadcastExclude(line, ca);
+                    se.broadcast(line, ca);
             } while(!line.equals("/close"));
 
             input.close();
-            se.broadcast("[INFO] "+name+" has logged out.");
+            se.broadcast("[INFO] "+name+" has logged out.", null);
             System.exit(0);
 
         } catch (Exception e) {

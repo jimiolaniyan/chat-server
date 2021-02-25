@@ -79,15 +79,17 @@ public class ServerEventImpl implements ServerEvent {
     }
 
     @Override
-    public void login(ClientActions client) throws RemoteException {
+    public boolean checkUsernameExists(String username) throws RemoteException {
         // This is work in progress so not perfect yet
-        // if (findExistingClient(client) != null) {
-        // client.getMessage("Sorry username: " + client.getName() + " already exists.
-        // Please select another one");
-        // return;
-        // }
+        if (findExistingClient(username) != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-        // ClientActionsImpl cl = (ClientActionsImpl) client;
+    @Override
+    public void login(ClientActions client) throws RemoteException {
         clients.add(client);
         System.out.println("[INFO] "+client.getName()+" has logged in.");
 
@@ -96,52 +98,45 @@ public class ServerEventImpl implements ServerEvent {
             client.getMessages(this.messages);
         }
 
-        broadcast("[SERVER] New client " + client.getName() + " has logged in.");
+        broadcast("[SERVER] New client " + client.getName() + " has logged in.", client);
     }
 
-    private ClientActions findExistingClient(ClientActions client) {
+    private ClientActions findExistingClient(String username) {
         return clients.stream().filter(c -> {
             boolean eq = false;
             try {
-                eq = c.getName().equals(client.getName());
+                eq = c.getName().equals(username);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                
             }
             return eq;
         }).findFirst().orElse(null);
     }
 
     @Override
-    public void broadcast(String msg) throws RemoteException {
-        for (Enumeration<ClientActions> e = clients.elements(); e.hasMoreElements();) {
-            ClientActions c = (ClientActions) e.nextElement();
-            try {
-                c.getMessage(msg);
-            } catch (RemoteException rex) {
-                System.out.println("[INFO] client has logged out");
-                clients.remove(c);
-            }
-        }
-    }
-
-    @Override
-    public void broadcastExclude(String msg, ClientActions sender) throws RemoteException {
+    public void broadcast(String msg, ClientActions sender) throws RemoteException {
         if (msg != null && !msg.isEmpty()) {
-            Message m = new Message(sender.getName(), msg);
-            messages.add(m);
-            try {
-                output.writeObject(m);
-                output.reset();
-                output.flush();
-            } catch (IOException e1) {
-                System.out.println("[ERROR] Can't write to persistency file. Reason : "+e1.getMessage());
-            }
+            if (sender != null) {
+                Message m = new Message(sender.getName(), msg);
+                messages.add(m);
+                try {
+                    output.writeObject(m);
+                    output.reset();
+                    output.flush();
+                } catch (IOException e1) {
+                    System.out.println("[ERROR] Can't write to persistency file. Reason : "+e1.getMessage());
+                }
+            } 
 
             for (Enumeration<ClientActions> e = clients.elements(); e.hasMoreElements(); ) {
                 ClientActions c = (ClientActions) e.nextElement();
                 try {
                     if (!c.equals(sender)) {
-                        c.getMessage(sender.getName() + " - " + msg);
+                        if (sender != null) {
+                            c.getMessage(sender.getName() + " - " + msg);
+                        } else {
+                            c.getMessage(msg);
+                        }
                     }
                 } catch (RemoteException rex) {
                     System.out.println("[INFO] client has logged out");
