@@ -81,11 +81,7 @@ public class ServerEventImpl implements ServerEvent {
     @Override
     public boolean checkUsernameExists(String username) throws RemoteException {
         // This is work in progress so not perfect yet
-        if (findExistingClient(username) != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return findExistingClient(username) != null;
     }
 
     @Override
@@ -98,7 +94,7 @@ public class ServerEventImpl implements ServerEvent {
             client.getMessages(this.messages);
         }
 
-        broadcast("[SERVER] New client " + client.getName() + " has logged in.", null);
+        broadcast("[SERVER] New client " + client.getName() + " has logged in.", client, true);
     }
 
     private ClientActions findExistingClient(String username) {
@@ -107,32 +103,27 @@ public class ServerEventImpl implements ServerEvent {
             try {
                 eq = c.getName().equals(username);
             } catch (RemoteException e) {
-                
+                System.out.println("This client is gone!");
             }
             return eq;
         }).findFirst().orElse(null);
     }
 
-    @Override
-    public void broadcast(String msg, ClientActions sender) throws RemoteException {
+
+    public void broadcast(String msg, ClientActions sender, boolean fromServer) throws RemoteException {
         if (msg != null && !msg.isEmpty()) {
-            if (sender != null) {
+            if (sender != null && !fromServer) {
                 Message m = new Message(sender.getName(), msg);
                 messages.add(m);
-                try {
-                    output.writeObject(m);
-                    output.reset();
-                    output.flush();
-                } catch (IOException e1) {
-                    System.out.println("[ERROR] Can't write to persistency file. Reason : "+e1.getMessage());
-                }
-            } 
+                new WriteRunnable(m, output).run();
+            }
 
+            System.out.println("[INFO] started broadcasting message");
             for (Enumeration<ClientActions> e = clients.elements(); e.hasMoreElements(); ) {
-                ClientActions c = (ClientActions) e.nextElement();
+                ClientActions c = e.nextElement();
                 try {
                     if (!c.equals(sender)) {
-                        if (sender != null) {
+                        if (sender != null && !fromServer) {
                             c.getMessage(sender.getName() + " - " + msg);
                         } else {
                             c.getMessage(msg);
@@ -143,7 +134,13 @@ public class ServerEventImpl implements ServerEvent {
                     clients.remove(c);
                 }
             }
+            System.out.println("[INFO] finished broadcasting message");
         }
+    }
+
+    @Override
+    public void broadcast(String msg, ClientActions sender) throws RemoteException {
+        broadcast(msg, sender, false);
     }
 
     public void kickAll(String reason) {

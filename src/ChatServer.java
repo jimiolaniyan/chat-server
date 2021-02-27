@@ -1,3 +1,5 @@
+import sun.misc.Signal;
+
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -5,6 +7,12 @@ import java.util.Scanner;
 
 public class ChatServer {
     public static void main(String[] args) {
+        Signal.handle(new Signal("INT"),  // SIGINT
+                signal -> {
+                    System.out.println(" Interrupted by Ctrl+C");
+                    System.exit(0);
+                });
+
         try {
             ServerEventImpl se = new ServerEventImpl();
             ServerEvent se_stub = (ServerEvent) UnicastRemoteObject.exportObject(se, 0);
