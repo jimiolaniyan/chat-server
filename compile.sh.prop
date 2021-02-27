@@ -7,8 +7,8 @@ if [ $PID ]; then
   kill $PID
 fi
 
-mkdir classes
-mkdir lib
+mkdir -p "classes"
+mkdir -p "lib"
 
 javac -d classes -classpath .:classes src/Message.java
 javac -d classes -classpath .:classes src/ClientActions.java

@@ -33,7 +33,7 @@ public class ChatClient extends JFrame {
             panel.add(send);
 
             // Output
-            JTextArea printer = new JTextArea();
+            JTextArea printer = new JTextArea("Welcome!\n");
             printer.setEditable(false);
             JScrollPane sp = new JScrollPane(printer);
             DefaultCaret caret = (DefaultCaret)printer.getCaret();
@@ -51,7 +51,6 @@ public class ChatClient extends JFrame {
 
             ServerEvent se = (ServerEvent) registry.lookup("ChatService");
 
-            printer.setText("");
             printer.append("Please enter your client name\n");
 
             send.addActionListener(e ->
