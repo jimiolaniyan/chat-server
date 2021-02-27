@@ -43,7 +43,7 @@ public class ChatClient {
                     if (line.startsWith("/history ")) {
                         if (line.split(" ").length == 2) {
                             //se.kick(line.split(" ")[1], line.replace("/kick "+line.split(" ")[1]+" ", ""));
-                            if (line.split(" ")[1] == "all") {
+                            if (line.split(" ")[1].equals("all")) {
                                 se.history(-1, ca);
                             } else {
                                 try {
