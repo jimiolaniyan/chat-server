@@ -115,10 +115,9 @@ public class ServerEventImpl implements ServerEvent {
             if (sender != null && !fromServer) {
                 Message m = new Message(sender.getName(), msg);
                 messages.add(m);
-                new WriteRunnable(m, output).run();
+                new Thread(new WriteRunnable(m, output)).start();
             }
 
-            System.out.println("[INFO] started broadcasting message");
             for (Enumeration<ClientActions> e = clients.elements(); e.hasMoreElements(); ) {
                 ClientActions c = e.nextElement();
                 try {
@@ -134,7 +133,6 @@ public class ServerEventImpl implements ServerEvent {
                     clients.remove(c);
                 }
             }
-            System.out.println("[INFO] finished broadcasting message");
         }
     }
 

@@ -17,8 +17,6 @@ public class WriteRunnable implements Runnable{
                 this.outputStream.writeObject(this.message);
                 this.outputStream.reset();
                 this.outputStream.flush();
-                System.out.println("[INFO] Finished writing -> '" +
-                        this.message.body + "' from -> " + this.message.username);
             } catch (IOException e) {
                 e.printStackTrace();
             }
