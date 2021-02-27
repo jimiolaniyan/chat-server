@@ -169,4 +169,18 @@ public class ServerEventImpl implements ServerEvent {
             }
         }
     }
+
+    public void history(Integer nbOfMessages, ClientActions client) throws RemoteException {
+        if (nbOfMessages == -1) {
+            client.getMessages(this.messages);
+        } else {
+            for (Message msg : this.messages) {
+                client.getMessage(msg.toString());
+                nbOfMessages--;
+                if (nbOfMessages <= 0) {
+                    break;
+                }
+            }
+        } 
+    }
 }
