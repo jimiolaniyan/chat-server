@@ -99,7 +99,7 @@ public class ChatClient extends JFrame {
                                     se.broadcast("[INFO] "+ca.getName()+" has logged out.", null);
                                     System.exit(0);
                                 } else {
-                                    printer.append(ca.getName()+" - "+line+"\n");
+                                    printer.append(line+"\n");
                                     se.broadcast(line, ca);
                                 }  
                             } catch (Exception exp) {
