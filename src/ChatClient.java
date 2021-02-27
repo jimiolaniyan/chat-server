@@ -51,6 +51,7 @@ public class ChatClient extends JFrame {
 
             ServerEvent se = (ServerEvent) registry.lookup("ChatService");
 
+            printer.setText("");
             printer.append("Please enter your client name\n");
 
             send.addActionListener(e ->
