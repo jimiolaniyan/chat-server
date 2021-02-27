@@ -1,22 +1,30 @@
 import java.rmi.RemoteException;
 import java.util.Vector;
 
+import javax.swing.JTextArea;
+
 public class ClientActionsImpl implements ClientActions {
 
     String name;
+    JTextArea out;
 
-    public ClientActionsImpl(String n) {
+    public ClientActionsImpl(String n, JTextArea o) {
         name = n;
+        out = o;
     }
 
     @Override
     public void getMessage(String msg) throws RemoteException {
-        System.out.println(msg);
+        //System.out.println(msg);
+        out.append(msg+"\n");
     }
 
     @Override
     public void getMessages(Vector<Message> messages) throws RemoteException {
-        messages.forEach(System.out::println);
+        //messages.forEach(System.out::println);
+        for (Message message : messages) {
+            out.append(message.toString()+"\n");
+        }
     }
 
     @Override
