@@ -6,16 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.net.SocketTimeoutException;
 import java.rmi.RemoteException;
-import java.sql.Array;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
 
@@ -77,7 +71,6 @@ public class ServerEventImpl implements ServerEvent {
             output = new ObjectOutputStream(bufferOut);
             System.out.println("[INFO] Opened persistency file.");
         } catch (Exception e) {
-            // TODO: handle exception
             System.out.println("[ERROR] Error on persistency file loading. Exit.");
             System.exit(1);
         }
@@ -85,8 +78,15 @@ public class ServerEventImpl implements ServerEvent {
 
     @Override
     public boolean checkUsernameExists(String username) throws RemoteException {
-        // This is work in progress so not perfect yet
-        return findExistingClient(username) != null;
+        return clients.stream().filter(c -> {
+            boolean eq = false;
+            try {
+                eq = c.getName().equals(username);
+            } catch (RemoteException e) {
+                System.out.println("This client is gone!");
+            }
+            return eq;
+        }).findFirst().orElse(null) != null;
     }
 
     @Override
@@ -102,21 +102,10 @@ public class ServerEventImpl implements ServerEvent {
         broadcast("[SERVER] New client " + client.getName() + " has logged in.", client, true);
     }
 
-    private ClientActions findExistingClient(String username) {
-        return clients.stream().filter(c -> {
-            boolean eq = false;
-            try {
-                eq = c.getName().equals(username);
-            } catch (RemoteException e) {
-                System.out.println("This client is gone!");
-            }
-            return eq;
-        }).findFirst().orElse(null);
-    }
-
-
     public void broadcast(String msg, ClientActions sender, boolean fromServer) throws RemoteException {
         if (msg != null && !msg.isEmpty()) {
+            // We don't save messages from the server
+            // so fromServer must be false
             if (sender != null && !fromServer) {
                 Message m = new Message(sender.getName(), msg);
                 messages.add(m);
