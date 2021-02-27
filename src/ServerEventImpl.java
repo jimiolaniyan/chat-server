@@ -11,7 +11,12 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.rmi.RemoteException;
+import java.sql.Array;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Vector;
 
 public class ServerEventImpl implements ServerEvent {
@@ -30,8 +35,8 @@ public class ServerEventImpl implements ServerEvent {
     public ServerEventImpl() {
         System.out.println("[INFO] Registry ready.");
 
-        clients = new Vector<>();
-        messages = new Vector<>();
+        clients = new Vector<ClientActions>();
+        messages = new Vector<Message>();
         System.out.println("[INFO] Data structures defined.");
 
         try {
@@ -163,5 +168,20 @@ public class ServerEventImpl implements ServerEvent {
                 System.out.print("");
             }
         }
+    }
+
+    public void history(Integer nbOfMessages, ClientActions client) throws RemoteException {
+        if (nbOfMessages == -1) {
+            client.getMessages(this.messages);
+        } else {
+            ListIterator<Message> iter = this.messages.listIterator(this.messages.size()-1);
+            while(iter.hasPrevious()) {
+                client.getMessage(iter.previous().toString());
+                nbOfMessages--;
+                if (nbOfMessages <= 0) {
+                    break;
+                }
+            }
+        } 
     }
 }

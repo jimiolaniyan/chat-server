@@ -40,7 +40,25 @@ public class ChatClient {
             do {
                 line =  input.nextLine();
                 if (!line.equals("/close"))
-                    se.broadcast(line, ca);
+                    if (line.startsWith("/history ")) {
+                        if (line.split(" ").length == 2) {
+                            //se.kick(line.split(" ")[1], line.replace("/kick "+line.split(" ")[1]+" ", ""));
+                            if (line.split(" ")[1].equals("all")) {
+                                se.history(-1, ca);
+                            } else {
+                                try {
+                                    Integer i = Integer.parseInt(line.split(" ")[1]);
+                                    se.history(i, ca);
+                                } catch (Exception e) {
+                                    System.out.println("Please provide a valid number (or 'all' for all history).");
+                                }
+                            }
+                        } else {
+                            System.out.println("Usage: /history nb_of_messages or /history all");
+                        }
+                    } else {
+                        se.broadcast(line, ca);
+                    }
             } while(!line.equals("/close"));
 
             input.close();
