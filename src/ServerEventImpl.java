@@ -98,7 +98,7 @@ public class ServerEventImpl implements ServerEvent {
             client.getMessages(this.messages);
         }
 
-        broadcast("[SERVER] New client " + client.getName() + " has logged in.", client);
+        broadcast("[SERVER] New client " + client.getName() + " has logged in.", null);
     }
 
     private ClientActions findExistingClient(String username) {
