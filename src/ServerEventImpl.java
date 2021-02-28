@@ -127,7 +127,7 @@ public class ServerEventImpl implements ServerEvent {
         broadcast("[SERVER] New client " + client.getName() + " has logged in.", client, true);
     }
 
-    public void broadcast(String msg, ClientActions sender, boolean fromServer) throws RemoteException {
+    private void broadcast(String msg, ClientActions sender, boolean fromServer) throws RemoteException {
         if (msg != null && !msg.isEmpty()) {
             // We don't save messages from the server
             // so fromServer must be false
