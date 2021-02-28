@@ -52,9 +52,11 @@ public class ChatClient extends JFrame {
             ServerEvent se = (ServerEvent) registry.lookup("ChatService");
 
             printer.append("Please enter your client name\n");
-
+            
+            // One dynamic action listener. Can be improved, but good enough for a first GUI
             send.addActionListener(e ->
             {
+                // Tries to login
                 try {
                     String name = inField.getText();
                     inField.setText("");
@@ -62,10 +64,12 @@ public class ChatClient extends JFrame {
                     if (doesNameExists_gui) {
                         printer.append("Sorry, the requested username is already in use. Please enter a new name.\n");
                     } else {
+                        // Login OK
                         printer.append("Name available ! Logging you in...\n\n");
                         ClientActions ca = (ClientActions) UnicastRemoteObject.exportObject(new ClientActionsImpl(name, printer), 0);
                         se.login(ca);
                         
+                        // Remove ourselves from listener
                         for (ActionListener a : send.getActionListeners()) {
                             send.removeActionListener(a);
                         }
@@ -74,11 +78,14 @@ public class ChatClient extends JFrame {
 
                         printer.append("Welcome to the chatroom, "+ca.getName()+" !\n");
 
+                        // Bind the new listener on the button for normal flow
                         send.addActionListener(f -> {
+                            // Original command/message loop, but in a listener
                             try {
                                 String line;
                                 line = inField.getText();
                                 inField.setText("");
+                                // Command treatment
                                 if (line.startsWith("/history ")) {
                                     if (line.split(" ").length == 2) {
                                         if (line.split(" ")[1].equals("all")) {
@@ -98,12 +105,12 @@ public class ChatClient extends JFrame {
                                     se.broadcast("[INFO] "+ca.getName()+" has logged out.", null);
                                     System.exit(0);
                                 } else {
+                                    // Default behavior : write message on self display + send to others
                                     printer.append(line+"\n");
                                     se.broadcast(line, ca);
                                 }  
                             } catch (Exception exp) {
-                                //TODO: handle exception
-                                printer.append("An error occured...\n");
+                                printer.append("An error occured. Please check the internet connection and restart the application.\n");
                             }
                         });
                     }

@@ -1,11 +1,12 @@
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+
+// Used to write the messages on the client without overloading the main thread
 
 public class WriteRunnable implements Runnable{
     Message message;
-    ObjectOutputStream outputStream;
+    AppendingObjectOutputStream outputStream;
 
-    public WriteRunnable(Message message, ObjectOutputStream outputStream) {
+    public WriteRunnable(Message message, AppendingObjectOutputStream outputStream) {
         this.message = message;
         this.outputStream = outputStream;
     }
@@ -15,7 +16,6 @@ public class WriteRunnable implements Runnable{
         synchronized (this) {
             try {
                 this.outputStream.writeObject(this.message);
-                this.outputStream.reset();
                 this.outputStream.flush();
             } catch (IOException e) {
                 e.printStackTrace();

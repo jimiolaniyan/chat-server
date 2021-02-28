@@ -21,6 +21,7 @@ public class ChatServer {
             Scanner input = new Scanner(System.in);
             String line;
 
+            // Command handling loop
             do {
                 System.out.print("#> ");
                 line = input.nextLine();

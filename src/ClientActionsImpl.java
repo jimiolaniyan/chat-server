@@ -14,12 +14,14 @@ public class ClientActionsImpl implements ClientActions {
     }
 
     public ClientActionsImpl(String n) {
+        // For textual client, with a default value
         name = n;
         out = null;
     }
 
     @Override
     public void getMessage(String msg) throws RemoteException {
+        // Prints logs on sysout in any case
         System.out.println(msg);
         if (out != null) {
             out.append(msg+"\n");
@@ -28,6 +30,7 @@ public class ClientActionsImpl implements ClientActions {
 
     @Override
     public void getMessages(Vector<Message> messages) throws RemoteException {
+        // Prints logs on sysout in any case
         messages.forEach(System.out::println);
         if (out != null) {
             for (Message message : messages) {
