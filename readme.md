@@ -2,7 +2,7 @@
 
 ## How to compile
 
-Please copy-paste the compile.sh.prop and rename it compile.sh, then change the CLASSPATH to put in your own absolute path to the folder containing the project.
+Please copy-paste the compile.sh.prop and rename it compile.sh, then change the `CLASSPATH` to put in your own absolute path to the folder containing the project.
 
 Then, chmod the script : chmod +x compile.sh
 And execute it.
@@ -36,12 +36,12 @@ Please use the send button.
 
 ### For the server
 
-/say text
-/kick username reason
-/kickall reason
-/close
+`/say [text]`  
+`/kick [username] [reason]`  
+`/kickall [reason]`  
+`/close`
 
 ### For the client
 
-/history [number of messages] : gets the x last messages sent on the chatroom, or all messages by using the /history all command
-/close : closes the client and terminates the connection
+`/history [number of messages]` : gets the `x` last messages sent on the chatroom, or all messages by using the `/history all` command.  
+`/close` : closes the client and terminates the connection
